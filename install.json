@@ -1,0 +1,23 @@
+{
+  "_comment": "All external download sources for real-JEV. run.py reads this on first launch and installs everything automatically. Nothing large is committed to the repo; it is fetched on setup and cached under ~/.cache/real-jev (Linux) so it never bloats the project.",
+
+  "ollama": {
+    "version": "v0.34.4",
+    "install_script": "https://ollama.com/install.sh",
+    "binaries": {
+      "linux-amd64":   "https://github.com/ollama/ollama/releases/download/v0.34.4/ollama-linux-amd64.tar.zst",
+      "linux-arm64":   "https://github.com/ollama/ollama/releases/download/v0.34.4/ollama-linux-arm64.tar.zst",
+      "darwin":        "https://ollama.com/download/Ollama-darwin.zip",
+      "windows-amd64": "https://ollama.com/download/OllamaSetup.exe"
+    },
+    "note": "The linux-*.tar.zst archives bundle the ollama binary AND its native libraries (lib/ollama). run.py extracts them locally, no sudo required."
+  },
+
+  "default_model_by_ram_gb": [
+    { "min_ram_gb": 0,  "model": "qwen2.5:0.5b" },
+    { "min_ram_gb": 4,  "model": "qwen2.5:1.5b" },
+    { "min_ram_gb": 8,  "model": "qwen2.5:3b"   },
+    { "min_ram_gb": 16, "model": "qwen2.5:7b"   }
+  ],
+  "default_model_note": "run.py picks the largest model whose min_ram_gb is <= your detected RAM. Models are pulled by tag from the Ollama registry (ollama pull <tag>); the full catalog lives in app/catalog.py and the Models tab."
+}
