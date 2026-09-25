@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>real-JEV — local typed-decision engine</title>
+  <link rel="stylesheet" href="/static/style.css" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧠</text></svg>" />
+</head>
+<body>
+<div class="app">
+  <!-- ============================ SIDEBAR ============================ -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-mark">JV</div>
+      <div class="brand-text">
+        <div class="brand-name">real&#8288;-&#8288;JEV</div>
+        <div class="brand-sub">typed-decision engine</div>
+      </div>
+    </div>
+
+    <nav class="nav">
+      <button class="tab active" data-tab="playground" data-title="Playground" data-desc="Give context and typed questions, get answers with probabilities.">
+        <svg viewBox="0 0 24 24"><path d="M4 6h10M4 12h16M4 18h7"/><circle cx="18" cy="6" r="2"/><circle cx="14" cy="18" r="2"/></svg>
+        <span>Playground</span>
+      </button>
+      <button class="tab" data-tab="models" data-title="Models" data-desc="Browse, download and switch local models to match your hardware.">
+        <svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.7l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.7l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5M12 22V12"/></svg>
+        <span>Models</span>
+      </button>
+      <button class="tab" data-tab="websearch" data-title="Web Search" data-desc="Give the model live internet access with a Brave or Firecrawl key.">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20M12 2a15 15 0 0 0 0 20"/></svg>
+        <span>Web Search</span>
+      </button>
+      <button class="tab" data-tab="about" data-title="About &amp; API" data-desc="What real-JEV is and how to call it programmatically.">
+        <svg viewBox="0 0 24 24"><path d="m16 18 6-6-6-6M8 6l-6 6 6 6"/></svg>
+        <span>About &amp; API</span>
+      </button>
+    </nav>
+
+    <div class="side-foot" id="statusBar">
+      <div class="statuscard">
+        <div class="scap">STATUS</div>
+        <div class="srow"><span class="pill" id="backendPill">checking…</span></div>
+        <div class="srow"><span class="pill ghost" id="modelPill">model: —</span></div>
+      </div>
+      <a class="ghlink" href="https://github.com/githubnext/localjev" target="_blank" rel="noreferrer">
+        <svg viewBox="0 0 24 24"><path d="M12 2A10 10 0 0 0 8.8 21.5c.5.1.7-.2.7-.5v-1.7c-2.8.6-3.4-1.3-3.4-1.3-.5-1.2-1.1-1.5-1.1-1.5-.9-.6.1-.6.1-.6 1 .1 1.5 1 1.5 1 .9 1.5 2.3 1.1 2.9.8.1-.6.3-1.1.6-1.3-2.2-.3-4.6-1.1-4.6-5a4 4 0 0 1 1-2.7 3.7 3.7 0 0 1 .1-2.7s.8-.3 2.7 1a9.4 9.4 0 0 1 5 0c1.9-1.3 2.7-1 2.7-1 .5 1.4.2 2.4.1 2.7a4 4 0 0 1 1 2.7c0 3.9-2.3 4.7-4.6 5 .4.3.7.9.7 1.8V21c0 .3.2.6.7.5A10 10 0 0 0 12 2Z"/></svg>
+        <span>inspired by LocalJev</span>
+      </a>
+    </div>
+  </aside>
+
+  <!-- ============================ CONTENT ============================ -->
+  <div class="content">
+    <header class="contenttop">
+      <div>
+        <h1 id="sectionTitle">Playground</h1>
+        <p class="topdesc" id="sectionDesc">Give context and typed questions, get answers with probabilities.</p>
+      </div>
+      <div class="topright">
+        <span class="modechip ok" id="modeChip">local</span>
+      </div>
+    </header>
+
+    <div id="demoBanner" class="banner hidden">
+      <svg viewBox="0 0 24 24"><path d="M12 9v4M12 17h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/></svg>
+      <div><b>Demo mode.</b> No local model backend detected — answers are simulated so you can explore the interface. Install a model in the <a href="#" data-goto="models">Models</a> tab for real decisions.</div>
+    </div>
+
+    <main>
+      <!-- ============================ PLAYGROUND ============================ -->
+      <section class="panel active" id="tab-playground">
+        <div class="grid">
+          <div class="stack">
+            <div class="card">
+              <div class="card-h"><span class="step">1</span><h2>Context</h2></div>
+              <p class="muted">The situation the model reasons about — a message, a document, or some data.</p>
+              <textarea id="stateInput" rows="6" placeholder="e.g. Hi, I've been trying to connect Stripe but keep getting a 403 error and I'm on a deadline."></textarea>
+            </div>
+
+            <div class="card">
+              <div class="card-h">
+                <span class="step">2</span><h2>Questions</h2>
+                <div class="card-h-actions">
+                  <button class="btn ghost sm" id="loadExample">Load example</button>
+                  <button class="btn sm" id="addQuestion">+ Add</button>
+                </div>
+              </div>
+              <p class="muted"><b>Choice</b> picks an option · <b>Score</b> rates an ordered rubric · <b>Noul</b> returns probability of “yes”.</p>
+              <div id="questions"></div>
+
+              <div class="runrow">
+                <label class="switch">
+                  <input type="checkbox" id="useWeb" />
+                  <span class="track"></span>
+                  <span class="lbl">Use web search for this run</span>
+                </label>
+                <button class="btn primary" id="runBtn">
+                  <svg viewBox="0 0 24 24" class="ic"><path d="m5 3 14 9-14 9V3Z"/></svg>
+                  Run decision
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="stack">
+            <div class="card results-card">
+              <div class="card-h"><span class="step">3</span><h2>Answers</h2></div>
+              <div id="results" class="results">
+                <div class="empty">
+                  <svg viewBox="0 0 24 24"><path d="M9 11l3 3 8-8"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+                  <p>Fill in a context &amp; questions, then hit <b>Run decision</b>.</p>
+                </div>
+              </div>
+              <details class="raw">
+                <summary>Raw JSON response</summary>
+                <pre id="rawJson">—</pre>
+              </details>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================ MODELS ============================ -->
+      <section class="panel" id="tab-models">
+        <div class="card">
+          <div class="card-h">
+            <h2>Browse &amp; install models</h2>
+            <div class="card-h-actions">
+              <label class="inline">RAM available
+                <select id="ramFilter">
+                  <option value="99">Any</option>
+                  <option value="2">2 GB</option>
+                  <option value="4" selected>4 GB</option>
+                  <option value="8">8 GB</option>
+                  <option value="16">16 GB</option>
+                </select>
+              </label>
+            </div>
+          </div>
+          <p class="muted">Models run locally through <b>Ollama</b>. Download one, then click <b>Use</b>. Smaller = faster &amp; lighter; larger = smarter but needs more RAM / a GPU.</p>
+          <div id="modelList" class="modelgrid"><p class="muted">Loading…</p></div>
+        </div>
+      </section>
+
+      <!-- ============================ WEB SEARCH ============================ -->
+      <section class="panel" id="tab-websearch">
+        <div class="colwrap">
+          <div class="card">
+            <div class="card-h"><h2>Internet access</h2></div>
+            <p class="muted">Add a search API key to let the model use live information. When enabled, real-JEV searches the web with your context + questions and feeds the top results into the model before it decides.</p>
+
+            <label class="switch big">
+              <input type="checkbox" id="webEnabled" />
+              <span class="track"></span>
+              <span class="lbl">Enable web search</span>
+            </label>
+
+            <div class="field">
+              <label>Provider</label>
+              <select id="webProvider">
+                <option value="brave">Brave Search API</option>
+                <option value="firecrawl">Firecrawl</option>
+              </select>
+            </div>
+
+            <div class="field" id="braveField">
+              <label>Brave Search API key <span class="statechip" id="braveState"></span></label>
+              <input type="password" id="braveKey" placeholder="BSA…  ·  get one at api-dashboard.search.brave.com" />
+            </div>
+
+            <div class="field hidden" id="firecrawlField">
+              <label>Firecrawl API key <span class="statechip" id="firecrawlState"></span></label>
+              <input type="password" id="firecrawlKey" placeholder="fc-…  ·  get one at firecrawl.dev" />
+            </div>
+
+            <div class="field">
+              <label>Results to fetch</label>
+              <input type="number" id="webCount" min="1" max="10" value="4" />
+            </div>
+
+            <div class="btnrow">
+              <button class="btn primary" id="saveWeb">Save settings</button>
+              <button class="btn ghost" id="testWeb">Test search</button>
+            </div>
+            <div id="webTestOut" class="testout"></div>
+          </div>
+
+          <div class="card">
+            <div class="card-h"><h2>Backend</h2><span class="tagpill">advanced</span></div>
+            <p class="muted">Default is Ollama. You can also point real-JEV at any OpenAI-compatible server (vLLM, llama.cpp server, LM Studio).</p>
+            <div class="field">
+              <label>Backend</label>
+              <select id="backendSel">
+                <option value="ollama">Ollama (recommended)</option>
+                <option value="openai">OpenAI-compatible server</option>
+              </select>
+            </div>
+            <div class="field"><label>Ollama URL</label><input id="ollamaUrl" placeholder="http://127.0.0.1:11434" /></div>
+            <div id="openaiFields" class="hidden">
+              <div class="field"><label>OpenAI base URL</label><input id="openaiBase" placeholder="http://127.0.0.1:8000/v1" /></div>
+              <div class="field"><label>API key (optional)</label><input id="openaiKey" type="password" placeholder="sk-… or leave blank" /></div>
+            </div>
+            <button class="btn primary" id="saveBackend">Save backend</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================ ABOUT ============================ -->
+      <section class="panel" id="tab-about">
+        <div class="colwrap">
+          <div class="card">
+            <div class="card-h"><h2>What is real-JEV?</h2></div>
+            <p>real-JEV is a local, open clone of the <a href="https://typesafe.ai/" target="_blank" rel="noreferrer">Jev</a> “System One” idea, inspired by <a href="https://github.com/githubnext/localjev" target="_blank" rel="noreferrer">GitHub Next’s LocalJev</a>. Instead of free-form chat, you give it <b>context + typed questions</b> and get back <b>constrained answers with probabilities</b> — ideal for routing, classification, scoring, and guardrails.</p>
+            <h3>Question types</h3>
+            <div class="typegrid">
+              <div class="typecard"><div class="tk">Choice</div><p>Pick one option from a set. Returns the winner + a probability for each option.</p></div>
+              <div class="typecard"><div class="tk">Score</div><p>Rate against an ordered rubric (low → high). Returns the chosen level + expected score.</p></div>
+              <div class="typecard"><div class="tk">Noul</div><p>A single probability in [0, 1] that the answer is “yes”.</p></div>
+            </div>
+            <p class="muted note">Runs 100% locally. Your context never leaves your machine unless you enable web search. Probabilities are self-reported by the model — calibrate before consequential use.</p>
+          </div>
+
+          <div class="card">
+            <div class="card-h"><h2>Use the API</h2></div>
+            <p class="muted">Wire-compatible with LocalJev’s <code>POST /v1/systemone</code>:</p>
+            <pre id="apiExample">—</pre>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+</div>
+<script src="/static/app.js"></script>
+</body>
+</html>
