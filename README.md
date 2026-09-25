@@ -5,7 +5,6 @@
 **A local, open, typed-decision playground.**
 Give it *context + typed questions*, get back *constrained answers with probabilities* — 100% on your own machine.
 
-Inspired by [GitHub Next's LocalJev](https://github.com/githubnext/localjev) and the [Jev](https://typesafe.ai/) "System One" idea, but with a friendly web UI, a built-in model browser, and optional internet access.
 
 ![status](https://img.shields.io/badge/runs-Windows%20%7C%20macOS%20%7C%20Linux-blue)
 ![python](https://img.shields.io/badge/python-3.9%2B-blue)
