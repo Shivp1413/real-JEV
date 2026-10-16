@@ -200,17 +200,7 @@ real-jev/
 
 ---
 
-## ❓ FAQ
 
-**Do I need a GPU?** No. The default model runs on CPU with ~4 GB RAM.
-
-**Is my data sent anywhere?** No — everything runs locally. Web search is the only feature that makes network calls, and only when you enable it.
-
-**Can I use my existing Ollama models?** Yes — anything already pulled shows up in the Models tab automatically.
-
-**vLLM / llama.cpp / LM Studio?** Yes — set the backend to *OpenAI-compatible* in the Web Search → Backend section and give it the base URL.
-
----
 
 ## 🙏 Credits & license
 
